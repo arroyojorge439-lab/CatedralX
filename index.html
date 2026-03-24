@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chalamandra Magistral – Inteligencia Soberana</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: radial-gradient(circle at 10% 20%, #0a0a0a, #000000);
+            color: #c0ffb0;
+            font-family: 'Courier New', 'Fira Code', monospace;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1000px;
+            width: 100%;
+            border: 2px solid #00ff41;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(2px);
+            box-shadow: 0 0 25px rgba(0, 255, 65, 0.3), 0 0 5px rgba(255, 0, 150, 0.5);
+            border-radius: 16px;
+            padding: 30px;
+            transition: 0.3s;
+        }
+
+        h1 {
+            font-family: 'Impact', 'Courier New', monospace;
+            font-size: 2.2em;
+            text-align: center;
+            letter-spacing: 2px;
+            background: linear-gradient(135deg, #00ff41, #ff00aa);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 0 5px rgba(0,255,65,0.3);
+            margin-bottom: 5px;
+        }
+
+        .sub {
+            text-align: center;
+            font-size: 0.85em;
+            color: #ff88cc;
+            margin-bottom: 30px;
+            border-bottom: 1px solid #ff00aa;
+            display: inline-block;
+            width: auto;
+            margin-left: auto;
+            margin-right: auto;
+            padding-bottom: 8px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 15px;
+            margin: 30px 0;
+        }
+
+        .card {
+            background: rgba(0, 20, 0, 0.6);
+            border: 1px solid #00ff41;
+            border-radius: 12px;
+            padding: 15px;
+            text-align: center;
+            transition: 0.2s;
+        }
+        .card:hover {
+            border-color: #ff00aa;
+            box-shadow: 0 0 12px #ff00aa;
+        }
+
+        .card-title {
+            font-size: 0.7em;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: #ff88cc;
+        }
+
+        .card-value {
+            font-size: 1.5em;
+            font-weight: bold;
+            word-break: break-word;
+            color: #00ff41;
+        }
+
+        .neuro-section {
+            margin: 25px 0;
+            background: #0a0a0a;
+            padding: 15px;
+            border-radius: 12px;
+            border: 1px solid #333;
+        }
+        .neuro-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+        .neuro-item {
+            background: #111;
+            padding: 8px 12px;
+            border-radius: 8px;
+        }
+        .neuro-label {
+            font-size: 0.75em;
+            color: #ffaa88;
+        }
+        .neuro-bar-container {
+            background: #222;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 6px 0;
+        }
+        .neuro-bar {
+            height: 8px;
+            width: 0%;
+            transition: width 0.3s;
+        }
+        .ser-bar { background: #00d4ff; }
+        .dop-bar { background: #ffcc00; }
+        .oxi-bar { background: #ff69b4; }
+        .end-bar { background: #ff4500; }
+        .neuro-value {
+            font-size: 0.85em;
+            font-weight: bold;
+        }
+
+        .veredicto {
+            text-align: center;
+            font-size: 1.8em;
+            font-weight: bold;
+            margin: 20px 0;
+            padding: 10px;
+            background: #0a0f0a;
+            border-radius: 40px;
+            letter-spacing: 2px;
+        }
+
+        .sales-section {
+            background: rgba(255, 0, 150, 0.1);
+            border-left: 5px solid #ff00aa;
+            padding: 20px;
+            margin: 25px 0;
+            border-radius: 8px;
+        }
+        .sales-title {
+            font-size: 1.4em;
+            font-weight: bold;
+            color: #ff88cc;
+            margin-bottom: 10px;
+        }
+        .price {
+            font-size: 2em;
+            font-weight: bold;
+            color: #00ff41;
+            display: inline-block;
+            margin-right: 15px;
+        }
+        .old-price {
+            text-decoration: line-through;
+            color: #aaa;
+            font-size: 1em;
+        }
+        .checklist {
+            list-style: none;
+            margin: 15px 0;
+        }
+        .checklist li {
+            margin: 8px 0;
+            padding-left: 24px;
+            position: relative;
+        }
+        .checklist li::before {
+            content: "⚡";
+            position: absolute;
+            left: 0;
+            color: #ff00aa;
+        }
+
+        .btn {
+            display: inline-block;
+            background: linear-gradient(135deg, #00ff41, #00cc33);
+            color: #000;
+            font-weight: bold;
+            font-size: 1.3em;
+            padding: 14px 28px;
+            text-align: center;
+            text-decoration: none;
+            border-radius: 40px;
+            transition: 0.2s;
+            margin-top: 10px;
+            width: 100%;
+            box-shadow: 0 0 10px #00ff41;
+        }
+        .btn:hover {
+            background: #ff00aa;
+            color: #fff;
+            box-shadow: 0 0 20px #ff00aa;
+            transform: scale(1.02);
+        }
+        .btn-small {
+            background: #ff00aa;
+            color: #fff;
+            padding: 8px 16px;
+            font-size: 0.9em;
+            border-radius: 30px;
+            text-decoration: none;
+            display: inline-block;
+            margin-top: 10px;
+        }
+        .btn-small:hover {
+            background: #00ff41;
+            color: #000;
+        }
+
+        .footer {
+            font-size: 0.7em;
+            text-align: center;
+            margin-top: 30px;
+            color: #666;
+            border-top: 1px solid #222;
+            padding-top: 15px;
+        }
+
+        @media (max-width: 600px) {
+            .container { padding: 20px; }
+            .neuro-grid { grid-template-columns: 1fr; }
+            .stats-grid { grid-template-columns: 1fr 1fr; }
+            .veredicto { font-size: 1.2em; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>🔮 CHALAMANDRA MAGISTRAL 🔮</h1>
+    <div class="sub">Decodifico caos en oro | Chola · Fresa · Malandra</div>
+
+    <!-- Datos en tiempo real desde tu Catedral -->
+    <div class="stats-grid">
+        <div class="card"><div class="card-title">🔌 ESTADO</div><div class="card-value" id="status">—</div></div>
+        <div class="card"><div class="card-title">₿ BTC / USD</div><div class="card-value" id="btc">—</div></div>
+        <div class="card"><div class="card-title">💰 BÓVEDA (USD)</div><div class="card-value" id="usd">—</div></div>
+        <div class="card"><div class="card-title">🪙 BÓVEDA (BTC)</div><div class="card-value" id="btc_hold">—</div></div>
+    </div>
+
+    <!-- Neuroquímica: el pulso de la Catedral -->
+    <div class="neuro-section">
+        <div style="text-align:center; margin-bottom:10px;">🧠 <span style="color:#ff88cc;">EL CONSEJO NEUROQUÍMICO</span> 🧠</div>
+        <div class="neuro-grid">
+            <div class="neuro-item"><div class="neuro-label">SEROTONINA (PAZ)</div><div class="neuro-bar-container"><div id="ser-bar" class="neuro-bar ser-bar"></div></div><span id="ser-val" class="neuro-value">0.00</span></div>
+            <div class="neuro-item"><div class="neuro-label">DOPAMINA (IMPULSO)</div><div class="neuro-bar-container"><div id="dop-bar" class="neuro-bar dop-bar"></div></div><span id="dop-val" class="neuro-value">0.00</span></div>
+            <div class="neuro-item"><div class="neuro-label">OXITOCINA (CONFIANZA)</div><div class="neuro-bar-container"><div id="oxi-bar" class="neuro-bar oxi-bar"></div></div><span id="oxi-val" class="neuro-value">0.00</span></div>
+            <div class="neuro-item"><div class="neuro-label">ENDORFINAS (ALEGRÍA)</div><div class="neuro-bar-container"><div id="end-bar" class="neuro-bar end-bar"></div></div><span id="end-val" class="neuro-value">0.00</span></div>
+        </div>
+        <div class="veredicto" id="veredicto">⚖️ ALINEADO ⚖️</div>
+    </div>
+
+    <!-- Producto 1: Reporte de Inteligencia Soberana -->
+    <div class="sales-section">
+        <div class="sales-title">🔥 REPORTE DE INTELIGENCIA SOBERANA 🔥</div>
+        <p><span class="price">$97 MXN</span> <span class="old-price">$299 MXN</span> <span style="color:#00ff41;">(oferta de lanzamiento)</span></p>
+        <p><strong>¿Qué recibes en 2 horas?</strong></p>
+        <ul class="checklist">
+            <li>📊 Análisis de sentimiento de mercado (miedo/euforia) con algoritmo inverso</li>
+            <li>📈 Posicionamiento: ¿acumulación o distribución?</li>
+            <li>🧠 Recomendación personalizada según tu perfil (conservador/agresivo)</li>
+            <li>💡 Estrategia SRAP: sincroniza ritmo y acción para decisiones calmadas</li>
+            <li>🔮 <strong>Bonus:</strong> Guía “Los 7 Aliados del 1%” – hoja de ruta para hackear el sistema (PDF descargable)</li>
+        </ul>
+        <p>✅ Entrega por WhatsApp o email en formato PDF + texto editable.</p>
+        <p>⚠️ <strong>Solo 10 reportes esta semana</strong> – prioridad a quienes actúan primero.</p>
+        <a href="https://ko-fi.com/tuusuario" target="_blank" class="btn">🔥 COMPRAR AHORA – $97 MXN 🔥</a>
+        <div style="font-size:0.8em; text-align:center; margin-top:15px;">💳 Acepto transferencia, Ko-fi o depósito. Contáctame para coordinar pago.</div>
+    </div>
+
+    <!-- Producto 2: Guía independiente -->
+    <div class="sales-section">
+        <div class="sales-title">📘 GUÍA “LOS 7 ALIADOS DEL 1%”</div>
+        <p><span class="price">$197 MXN</span> <span class="old-price">$299 MXN</span></p>
+        <ul class="checklist">
+            <li>🎭 Domina el arte de contar tu historia (Scheherazade)</li>
+            <li>🧬 Reconoce patrones fractales (Hermes)</li>
+            <li>🌀 Usa la paradoja como acelerador (Carroll)</li>
+            <li>🔓 Hackea incentivos (Hacker Anónima)</li>
+            <li>⚡ Inyecta caos estratégico (Trickster)</li>
+            <li>📊 Sigue datos, no intuición (IA)</li>
+            <li>🎈 Juega como un niño de 8 años</li>
+        </ul>
+        <p>📥 PDF descargable al instante.</p>
+        <a href="guia_1porciento.pdf" download class="btn-small">📘 DESCARGAR GRATIS (con reporte)</a>
+        <a href="https://ko-fi.com/tuusuario" target="_blank" class="btn-small" style="margin-left:10px;">💰 COMPRAR SÓLO GUÍA – $197 MXN</a>
+    </div>
+
+    <div class="footer">
+        🏰 Catedral de la Conciencia – Datos en tiempo real desde mi búnker soberano.<br>
+        *El reporte incluye análisis exclusivo basado en el algoritmo “comprar miedo, vender euforia”.*
+    </div>
+</div>
+
+<script>
+    async function fetchData() {
+        try {
+            const [statusRes, marketRes, neuroRes, vaultRes] = await Promise.all([
+                fetch('/api/status'),
+                fetch('/api/market'),
+                fetch('/api/neuro'),
+                fetch('/api/vault')
+            ]);
+            const status = await statusRes.json();
+            const market = await marketRes.json();
+            const neuro = await neuroRes.json();
+            const vault = await vaultRes.json();
+
+            document.getElementById('status').innerText = status.status || 'OFFLINE';
+            document.getElementById('btc').innerHTML = market.btc_price ? `$${market.btc_price.toLocaleString()}` : '—';
+            document.getElementById('usd').innerHTML = vault.usd ? `$${vault.usd.toFixed(2)}` : '0.00';
+            document.getElementById('btc_hold').innerHTML = vault.btc ? vault.btc.toFixed(8) : '0.00000000';
+
+            const ser = neuro.serotonina ?? 0;
+            const dop = neuro.dopamina ?? 0;
+            const oxi = neuro.oxitocina ?? 0;
+            const end = neuro.endorfinas ?? 0;
+
+            document.getElementById('ser-val').innerText = ser.toFixed(2);
+            document.getElementById('dop-val').innerText = dop.toFixed(2);
+            document.getElementById('oxi-val').innerText = oxi.toFixed(2);
+            document.getElementById('end-val').innerText = end.toFixed(2);
+            document.getElementById('ser-bar').style.width = (ser * 100) + '%';
+            document.getElementById('dop-bar').style.width = (dop * 100) + '%';
+            document.getElementById('oxi-bar').style.width = (oxi * 100) + '%';
+            document.getElementById('end-bar').style.width = (end * 100) + '%';
+
+            const verdict = neuro.veredicto || 'ESPERANDO';
+            document.getElementById('veredicto').innerHTML = verdict;
+            let color = '#c0ffb0';
+            if (verdict === 'ALINEADO') color = '#00ff41';
+            else if (verdict === 'STANDBY') color = '#ffaa00';
+            else if (verdict === 'COMPROMETIDO') color = '#ff0041';
+            document.getElementById('veredicto').style.color = color;
+        } catch (err) {
+            console.error('Error cargando datos de la Catedral', err);
+            document.getElementById('status').innerText = 'ERROR';
+        }
+    }
+
+    fetchData();
+    setInterval(fetchData, 5000);
+</script>
+</body>
+</html>
