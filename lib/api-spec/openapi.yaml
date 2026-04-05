@@ -1,0 +1,792 @@
+openapi: 3.1.0
+info:
+  # Do not change the title, if the title changes, the import paths will be broken
+  title: Api
+  version: 0.1.0
+  description: CATEDRALX - Chalamandra Labs SNC API
+servers:
+  - url: /api
+    description: Base API path
+tags:
+  - name: health
+    description: Health operations
+  - name: auth
+    description: Authentication operations
+  - name: vitals
+    description: System vitals
+  - name: signals
+    description: Trading signals
+  - name: paper-trading
+    description: Paper trading
+  - name: git
+    description: Git/Codex operations
+  - name: nervous
+    description: Nervous system
+  - name: ai
+    description: AI generation
+paths:
+  /healthz:
+    get:
+      operationId: healthCheck
+      tags: [health]
+      summary: Health check
+      responses:
+        "200":
+          description: Healthy
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthStatus"
+
+  /auth/register:
+    post:
+      operationId: register
+      tags: [auth]
+      summary: Register a new user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RegisterBody"
+      responses:
+        "200":
+          description: Registered
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthResponse"
+        "400":
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /auth/login:
+    post:
+      operationId: login
+      tags: [auth]
+      summary: Login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LoginBody"
+      responses:
+        "200":
+          description: Logged in
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthResponse"
+        "401":
+          description: Invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /auth/logout:
+    post:
+      operationId: logout
+      tags: [auth]
+      summary: Logout
+      responses:
+        "200":
+          description: Logged out
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                required: [success]
+
+  /auth/me:
+    get:
+      operationId: getMe
+      tags: [auth]
+      summary: Get current user
+      responses:
+        "200":
+          description: Current user info
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MeResponse"
+
+  /system/vitals:
+    get:
+      operationId: getVitals
+      tags: [vitals]
+      summary: Get system vitals including BTC price, signals, trading stats
+      responses:
+        "200":
+          description: System vitals
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/VitalsData"
+
+  /system/nervous:
+    get:
+      operationId: getNervousState
+      tags: [nervous]
+      summary: Get current nervous system state (IIT Phi, GWT, etc.)
+      responses:
+        "200":
+          description: Nervous system state
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/NervousState"
+
+  /system/nervous/tick:
+    post:
+      operationId: nervousTick
+      tags: [nervous]
+      summary: Trigger a nervous system tick (Soberano only)
+      responses:
+        "200":
+          description: Updated nervous state
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/NervousState"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /system/affective:
+    post:
+      operationId: recordAffective
+      tags: [vitals]
+      summary: Record an affective state event
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AffectiveBody"
+      responses:
+        "200":
+          description: Recorded
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                required: [success]
+
+  /signals:
+    get:
+      operationId: getSignals
+      tags: [signals]
+      summary: Get trading signals
+      parameters:
+        - name: limit
+          in: query
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Signals list
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SignalsResponse"
+
+  /signals/generate:
+    post:
+      operationId: generateSignals
+      tags: [signals]
+      summary: Manually trigger signal generation
+      responses:
+        "200":
+          description: Generated signals
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GenerateSignalsResponse"
+
+  /paper-trading/portfolio:
+    get:
+      operationId: getPortfolio
+      tags: [paper-trading]
+      summary: Get current paper trading portfolio
+      responses:
+        "200":
+          description: Portfolio data
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PortfolioResponse"
+
+  /paper-trading/trade:
+    post:
+      operationId: executeTrade
+      tags: [paper-trading]
+      summary: Execute a paper trade
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TradeBody"
+      responses:
+        "200":
+          description: Trade executed
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TradeResponse"
+
+  /paper-trading/history:
+    get:
+      operationId: getTradeHistory
+      tags: [paper-trading]
+      summary: Get trade history
+      responses:
+        "200":
+          description: Trade history
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TradeHistoryResponse"
+
+  /git/status:
+    get:
+      operationId: getGitStatus
+      tags: [git]
+      summary: Get git status
+      responses:
+        "200":
+          description: Git status
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+
+  /git/commit:
+    post:
+      operationId: gitCommit
+      tags: [git]
+      summary: Commit changes
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CommitBody"
+      responses:
+        "200":
+          description: Committed
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GitOperationResponse"
+
+  /git/push:
+    post:
+      operationId: gitPush
+      tags: [git]
+      summary: Push to remote
+      responses:
+        "200":
+          description: Pushed
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GitOperationResponse"
+
+  /git/add:
+    post:
+      operationId: gitAdd
+      tags: [git]
+      summary: Stage files
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/GitAddBody"
+      responses:
+        "200":
+          description: Files staged
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GitOperationResponse"
+
+  /local-repos:
+    get:
+      operationId: getLocalRepos
+      tags: [git]
+      summary: Get local repos from chalamandra-labs/repos.json
+      responses:
+        "200":
+          description: Local repos
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Repo"
+
+  /github/repos/{username}:
+    get:
+      operationId: getGithubRepos
+      tags: [git]
+      summary: Get GitHub repos for a user
+      parameters:
+        - name: username
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: GitHub repos
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  additionalProperties: true
+
+  /manifesto:
+    get:
+      operationId: getManifesto
+      tags: [git]
+      summary: Get the manifesto text
+      responses:
+        "200":
+          description: Manifesto text
+          content:
+            text/plain:
+              schema:
+                type: string
+
+  /invoke-strategy/{id}:
+    post:
+      operationId: invokeStrategy
+      tags: [signals]
+      summary: Invoke a strategy by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Strategy invoked
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/StrategyInvokeResponse"
+
+  /ai/generate:
+    post:
+      operationId: aiGenerate
+      tags: [ai]
+      summary: Generate AI response using Gemini (Soberano only)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AiGenerateBody"
+      responses:
+        "200":
+          description: AI response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AiGenerateResponse"
+        "403":
+          description: Requires Soberano plan
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+components:
+  schemas:
+    HealthStatus:
+      type: object
+      properties:
+        status:
+          type: string
+      required: [status]
+
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+      required: [error]
+
+    RegisterBody:
+      type: object
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+        name:
+          type: ["string", "null"]
+      required: [email, password]
+
+    LoginBody:
+      type: object
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+      required: [email, password]
+
+    UserInfo:
+      type: object
+      properties:
+        id:
+          type: integer
+        email:
+          type: string
+        name:
+          type: ["string", "null"]
+        tier:
+          type: string
+      required: [id, email, tier]
+
+    AuthResponse:
+      type: object
+      properties:
+        user:
+          $ref: "#/components/schemas/UserInfo"
+      required: [user]
+
+    MeResponse:
+      type: object
+      properties:
+        user:
+          type: ["object", "null"]
+          properties:
+            id:
+              type: integer
+            email:
+              type: string
+            name:
+              type: ["string", "null"]
+            tier:
+              type: string
+          required: [id, email, tier]
+      required: [user]
+
+    VitalsData:
+      type: object
+      properties:
+        btc:
+          type: object
+          properties:
+            price:
+              type: number
+            change24h:
+              type: number
+            volatility:
+              type: number
+          required: [price, change24h, volatility]
+        server:
+          type: object
+          properties:
+            latencyMs:
+              type: number
+            uptimeHours:
+              type: number
+            requestCount:
+              type: integer
+            status:
+              type: string
+          required: [latencyMs, uptimeHours, requestCount, status]
+        signals:
+          type: object
+          properties:
+            lastSignal:
+              type: ["object", "null"]
+              additionalProperties: true
+            totalCount:
+              type: integer
+          required: [totalCount]
+        trading:
+          type: object
+          properties:
+            tradeCount:
+              type: integer
+            pnlPercent:
+              type: number
+          required: [tradeCount, pnlPercent]
+        user:
+          type: object
+          properties:
+            tier:
+              type: string
+            sessionActive:
+              type: boolean
+            hasStripeSubscription:
+              type: boolean
+            secureConnection:
+              type: boolean
+          required: [tier, sessionActive, hasStripeSubscription, secureConnection]
+        entropy:
+          type: object
+          properties:
+            repoCount:
+              type: integer
+            signalsAccumulated:
+              type: integer
+            tradesExecuted:
+              type: integer
+          required: [repoCount, signalsAccumulated, tradesExecuted]
+        affective:
+          type: object
+          properties:
+            valencia:
+              type: number
+            activacion:
+              type: number
+            persistencia:
+              type: number
+          required: [valencia, activacion, persistencia]
+      required: [btc, server, signals, trading, user, entropy, affective]
+
+    NervousState:
+      type: object
+      properties:
+        phi:
+          type: number
+        delta:
+          type: number
+        gwtFocus:
+          type: array
+          items:
+            type: object
+            properties:
+              variable:
+                type: string
+              weight:
+                type: number
+            required: [variable, weight]
+        gwtBroadcast:
+          type: string
+        synapticWeights:
+          type: array
+          items:
+            type: array
+            items:
+              type: number
+        strategyNames:
+          type: array
+          items:
+            type: string
+        learningRate:
+          type: number
+        moduleActivations:
+          type: object
+          additionalProperties:
+            type: number
+        pulse:
+          type: object
+          properties:
+            dopamine:
+              type: number
+            adrenaline:
+              type: number
+            soma:
+              type: number
+            asymmetry:
+              type: number
+            liquidityTrap:
+              type: boolean
+          required: [dopamine, adrenaline, soma, asymmetry, liquidityTrap]
+        timestamp:
+          type: string
+      required: [phi, delta, gwtFocus, gwtBroadcast, synapticWeights, learningRate, moduleActivations, pulse, timestamp]
+
+    AffectiveBody:
+      type: object
+      properties:
+        source:
+          type: string
+      required: [source]
+
+    Signal:
+      type: object
+      properties:
+        id:
+          type: integer
+        strategy:
+          type: string
+        type:
+          type: string
+        message:
+          type: string
+        price:
+          type: number
+        confidence:
+          type: integer
+        created_at:
+          type: string
+      required: [strategy, type, message, price, confidence]
+
+    SignalsResponse:
+      type: object
+      properties:
+        signals:
+          type: array
+          items:
+            $ref: "#/components/schemas/Signal"
+        limited:
+          type: boolean
+        tier:
+          type: string
+      required: [signals, limited, tier]
+
+    GenerateSignalsResponse:
+      type: object
+      properties:
+        signals:
+          type: array
+          items:
+            $ref: "#/components/schemas/Signal"
+        count:
+          type: integer
+      required: [signals, count]
+
+    PortfolioResponse:
+      type: object
+      properties:
+        portfolio:
+          type: ["object", "null"]
+          additionalProperties: true
+        trades:
+          type: array
+          items:
+            type: object
+            additionalProperties: true
+        btcPrice:
+          type: number
+      required: [portfolio, trades, btcPrice]
+
+    TradeBody:
+      type: object
+      properties:
+        action:
+          type: string
+        amountUsd:
+          type: number
+        strategy:
+          type: ["string", "null"]
+      required: [action, amountUsd]
+
+    TradeResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        message:
+          type: string
+        portfolio:
+          type: object
+          additionalProperties: true
+      required: [success, message]
+
+    TradeHistoryResponse:
+      type: object
+      properties:
+        trades:
+          type: array
+          items:
+            type: object
+            additionalProperties: true
+      required: [trades]
+
+    CommitBody:
+      type: object
+      properties:
+        message:
+          type: string
+      required: [message]
+
+    GitAddBody:
+      type: object
+      properties:
+        files:
+          type: ["string", "null"]
+
+    GitOperationResponse:
+      type: object
+      properties:
+        status:
+          type: string
+        message:
+          type: string
+      required: [status, message]
+
+    Repo:
+      type: object
+      properties:
+        id:
+          type: string
+        nombre:
+          type: string
+        capa:
+          type: string
+        peso_w:
+          type: number
+        descripcion:
+          type: string
+        url:
+          type: string
+      required: [id, nombre, capa, peso_w, descripcion, url]
+
+    StrategyInvokeResponse:
+      type: object
+      properties:
+        status:
+          type: string
+        message:
+          type: string
+        id:
+          type: integer
+      required: [status, message, id]
+
+    AiGenerateBody:
+      type: object
+      properties:
+        lobe:
+          type: string
+        prompt:
+          type: string
+      required: [lobe, prompt]
+
+    AiGenerateResponse:
+      type: object
+      properties:
+        text:
+          type: string
+        lobe:
+          type: string
+        model:
+          type: string
+      required: [text, lobe, model]
