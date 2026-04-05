@@ -44,15 +44,29 @@ pnpm workspace monorepo using TypeScript. Each package manages its own dependenc
 | operador | $29/mo | 20 max | yes | no | no |
 | soberano | $99/mo | unlimited | yes | yes | yes |
 
+## Payments (Stripe)
+
+- Integration via Replit Stripe connector (sandbox in dev, live in prod)
+- `stripe` and `stripe-replit-sync` installed at workspace root
+- `stripe-replit-sync` is externalized in esbuild (not bundled)
+- Products in Stripe: **Operador** (prod_UHQUW1ytLPVj2i, $29/mo), **Soberano** (prod_UHQUuP9AYObiri, $99/mo)
+- Stripe schema (`stripe.*`) auto-managed by `stripe-replit-sync`
+- Webhook at `/api/stripe/webhook` — registered BEFORE `express.json()` in app.ts
+- Routes: `GET /api/stripe/planes`, `POST /api/stripe/checkout`, `POST /api/stripe/portal`
+- `stripeClient.ts` in both api-server and scripts directories
+- Seed script: `pnpm --filter @workspace/scripts exec tsx src/seed-products.ts`
+
 ## Auth
 
 - Session-based (express-session + connect-pg-simple)
 - Cookie name: `catedralx.sid`
-- Sessions table: auto-created by connect-pg-simple
+- Sessions table: manually created in PostgreSQL (NOT auto-created by connect-pg-simple)
+- `createTableIfMissing: false` — uses shared `pool` from `@workspace/db`
 
 ## DB Schema (Drizzle ORM)
 
-Tables: `users`, `signals`, `paper_portfolios`, `paper_trades`, `affective_state`, `nervous_state`, `sessions`
+Tables: `users` (includes `stripe_customer_id`, `stripe_subscription_id`), `signals`, `paper_portfolios`, `paper_trades`, `affective_state`, `nervous_state`, `sessions`
+Stripe tables (`stripe.*`): managed automatically by stripe-replit-sync
 
 ## Key Files
 
