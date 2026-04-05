@@ -3,7 +3,9 @@ import cors from "cors";
 import pinoHttp from "pino-http";
 import session from "express-session";
 import connectPgSimple from "connect-pg-simple";
+import { pool } from "@workspace/db";
 import router from "./routes";
+import { WebhookHandlers } from "./webhookHandlers";
 import { logger } from "./lib/logger";
 
 const app: Express = express();
@@ -13,25 +15,38 @@ app.use(
     logger,
     serializers: {
       req(req) {
-        return {
-          id: req.id,
-          method: req.method,
-          url: req.url?.split("?")[0],
-        };
+        return { id: req.id, method: req.method, url: req.url?.split("?")[0] };
       },
       res(res) {
-        return {
-          statusCode: res.statusCode,
-        };
+        return { statusCode: res.statusCode };
       },
     },
-  }),
+  })
 );
 
-app.use(cors({
-  origin: true,
-  credentials: true,
-}));
+app.use(cors({ origin: true, credentials: true }));
+
+// ─── Stripe webhook ANTES de express.json() ───
+app.post(
+  "/api/stripe/webhook",
+  express.raw({ type: "application/json" }),
+  async (req, res) => {
+    const signature = req.headers["stripe-signature"];
+    if (!signature) {
+      return res.status(400).json({ error: "Falta stripe-signature" });
+    }
+    try {
+      const sig = Array.isArray(signature) ? signature[0] : signature;
+      await WebhookHandlers.processWebhook(req.body as Buffer, sig);
+      res.status(200).json({ recibido: true });
+    } catch (err: any) {
+      logger.error({ err }, "Error en webhook de Stripe");
+      res.status(400).json({ error: "Error procesando webhook" });
+    }
+  }
+);
+
+// ─── Middleware general DESPUÉS del webhook ───
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -40,12 +55,12 @@ const PgStore = connectPgSimple(session);
 app.use(
   session({
     store: new PgStore({
-      conString: process.env.DATABASE_URL,
+      pool: pool as Parameters<typeof PgStore>[0]["pool"],
       tableName: "sessions",
-      createTableIfMissing: true,
+      createTableIfMissing: false,
     }),
     name: "catedralx.sid",
-    secret: process.env.SESSION_SECRET || "catedralx-dev-secret-change-in-prod",
+    secret: process.env.SESSION_SECRET || "catedralx-dev-secret",
     resave: false,
     saveUninitialized: false,
     cookie: {
