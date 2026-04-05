@@ -7,6 +7,7 @@ import paperTradingRouter from "./paperTrading";
 import nervousRouter from "./nervous";
 import gitRouter from "./git";
 import aiRouter from "./ai";
+import stripeRouter from "./stripe";
 
 const router: IRouter = Router();
 
@@ -18,5 +19,6 @@ router.use(paperTradingRouter);
 router.use(nervousRouter);
 router.use(gitRouter);
 router.use(aiRouter);
+router.use(stripeRouter);
 
 export default router;
